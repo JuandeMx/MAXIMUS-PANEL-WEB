@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg: #0b0f17;
+    --sidebar: #111726;
+    --card: #161f30;
+    --card-hover: #1c283e;
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #f3f4f6;
+    --text-muted: #9ca3af;
+    --text-subtle: #6b7280;
+    --accent: #22d3ee;
+    --accent-fg: #0a0a0a;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+  }
+
+  html.light {
+    --bg: #f8fafc;
+    --sidebar: #ffffff;
+    --card: #ffffff;
+    --card-hover: #f1f5f9;
+    --border: rgba(0, 0, 0, 0.08);
+    --text: #0f172a;
+    --text-muted: #475569;
+    --text-subtle: #94a3b8;
+  }
+
+  html[data-accent="cyan"] {
+    --accent: #22d3ee;
+  }
+  html[data-accent="emerald"] {
+    --accent: #10b981;
+  }
+  html[data-accent="purple"] {
+    --accent: #c084fc;
+  }
+  html[data-accent="amber"] {
+    --accent: #fbbf24;
+  }
+  html[data-accent="rose"] {
+    --accent: #f43f5e;
+  }
+  html[data-accent="blue"] {
+    --accent: #38bdf8;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+/* Glassmorphism & Custom Accents */
+.glass-panel {
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.glass-panel-hover:hover {
+  background: var(--card-hover);
+}
+
+.glow-accent {
+  box-shadow: 0 0 20px -3px var(--accent);
+}
+
+.glow-accent-sm {
+  box-shadow: 0 0 10px -2px var(--accent);
+}
+
+.border-accent {
+  border-color: var(--accent);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.bg-accent {
+  background-color: var(--accent);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+

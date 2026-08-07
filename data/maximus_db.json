@@ -1,0 +1,114 @@
+{
+  "users": [
+    {
+      "id": "usr_admin_owner",
+      "username": "admin",
+      "email": "admin@maximus.com",
+      "role": "owner",
+      "name": "Administrador Principal",
+      "credits": 9999,
+      "createdAt": "2026-08-06T22:51:37.042Z",
+      "password": "admin"
+    },
+    {
+      "id": "usr_1786057003766",
+      "username": "JAIMEADMIN",
+      "email": "jgjuandemc@outlook.com",
+      "name": "JAIME",
+      "password": "admin",
+      "role": "subadmin",
+      "credits": 9999,
+      "createdAt": "2026-08-06T22:56:43.766Z"
+    }
+  ],
+  "servers": [
+    {
+      "name": "MEXICO AWS",
+      "ip": "78.13.112.147",
+      "location": "CENTRAL",
+      "flag": "MX",
+      "os": "Ubuntu 24.04 LTS",
+      "sshPort": 22,
+      "ramTotalGb": 1.9,
+      "diskTotalGb": 27.9,
+      "bandwidthLimitGb": 10000,
+      "installedProtocols": [
+        "SSH",
+        "V2Ray",
+        "Trojan",
+        "WireGuard"
+      ],
+      "id": "srv-01",
+      "status": "online",
+      "cpuUsage": 12,
+      "ramUsage": 32.4,
+      "diskUsage": 11.2,
+      "bandwidthUsedGb": 3.09,
+      "activeTunnels": 0,
+      "uptime": "1d 12h 3m",
+      "bytesSent": 1012013907,
+      "bytesRecv": 2310926812,
+      "activeServices": {
+        "BADVPN": {
+          "status": "OFFLINE",
+          "port": "7300"
+        },
+        "DROPBEAR": {
+          "status": "OFFLINE",
+          "port": "44"
+        },
+        "SSL / TLS": {
+          "status": "ONLINE",
+          "port": "443"
+        },
+        "WEBSOCKET / PYTHON": {
+          "status": "OFFLINE",
+          "port": "80"
+        },
+        "V2RAY / XRAY NATIVO": {
+          "status": "OFFLINE",
+          "port": "443"
+        },
+        "SSH DIRECT": {
+          "status": "ONLINE",
+          "port": "22"
+        }
+      }
+    }
+  ],
+  "clients": [],
+  "resellers": [
+    {
+      "name": "ccccccc",
+      "username": "jajaja",
+      "password": "jajaja",
+      "email": "jgjuaSSSdemc@outlook.com",
+      "role": "Revendedor Estándar",
+      "credits": 100,
+      "demoCredits": 9,
+      "commissionPercentage": 20,
+      "status": "active",
+      "id": "res-02",
+      "joinedDate": "2026-08-07",
+      "totalSales": 0,
+      "activeClientsCount": 1,
+      "avatar": "C"
+    },
+    {
+      "name": "VPN LATQAM",
+      "username": "admin",
+      "password": "admin",
+      "email": "jgjuaSSSdemc@outlook.com",
+      "role": "Revendedor Estándar",
+      "credits": 100,
+      "demoCredits": 25,
+      "commissionPercentage": 20,
+      "status": "active",
+      "id": "res-01",
+      "joinedDate": "2026-08-07",
+      "totalSales": 0,
+      "activeClientsCount": 0,
+      "avatar": "VL"
+    }
+  ]
+}

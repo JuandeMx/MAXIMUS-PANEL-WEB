@@ -1,0 +1,6 @@
+{
+  "name": "Secure Panel - Control VPN & VPS",
+  "description": "Panel de administración y control integral de servidores VPS, cuentas VPN (SSH, V2Ray, Trojan, WireGuard), monitoreo de tráfico en tiempo real y gestión de revendedores.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
