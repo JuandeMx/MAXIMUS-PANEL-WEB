@@ -211,9 +211,11 @@ app.post('/api/upload', (req, res) => {
 });
 
 // Endpoint de Validación y Vinculación HWID para la App Móvil (Handshake)
-app.post('/api/auth/connect', (req, res) => {
+app.all(['/api/auth/connect', '/api/auth/client'], (req, res) => {
   try {
-    const { username, password, hwid } = req.body;
+    const username = req.body?.username || req.query?.username || req.body?.user || req.query?.user;
+    const password = req.body?.password || req.query?.password || req.body?.pass || req.query?.pass;
+    const hwid = req.body?.hwid || req.query?.hwid || req.body?.deviceId || req.query?.deviceId;
 
     if (!username || !hwid) {
       return res.status(400).json({
