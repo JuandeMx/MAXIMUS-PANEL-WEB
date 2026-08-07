@@ -18,6 +18,7 @@ import {
   Zap,
   Edit,
   X,
+  Smartphone,
 } from 'lucide-react';
 
 export const ClientsView: React.FC = () => {
@@ -31,6 +32,7 @@ export const ClientsView: React.FC = () => {
     deleteVpnClient,
     toggleClientStatus,
     extendClientExpiration,
+    resetClientHwid,
     removeUserFromNode,
     currentUser,
   } = useApp();
@@ -170,11 +172,24 @@ export const ClientsView: React.FC = () => {
                         </div>
                       </td>
 
-                      {/* Connections */}
+                      {/* Connections & HWID Status */}
                       <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-[var(--text)]">{client.activeConnections || 0}</span>
-                          <span className="text-[var(--text-subtle)]">/ {client.maxConnections || 1} dispositivos</span>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-[var(--text)]">{client.activeConnections || 0}</span>
+                            <span className="text-[var(--text-subtle)]">/ {client.maxConnections || 1} disp.</span>
+                          </div>
+                          {client.hwid ? (
+                            <span className="inline-flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30" title={`HWID: ${client.hwid}`}>
+                              <Smartphone size={10} />
+                              <span>Dispositivo Vinculado</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-[var(--text-subtle)] border border-white/10">
+                              <Smartphone size={10} />
+                              <span>Sin Vincular</span>
+                            </span>
+                          )}
                         </div>
                       </td>
 
@@ -235,6 +250,20 @@ export const ClientsView: React.FC = () => {
                       {/* Actions */}
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1">
+                          {/* Reset HWID Button */}
+                          {client.hwid && (
+                            <button
+                              onClick={() => {
+                                if (confirm(`¿Restablecer el dispositivo HWID de "${client.username}"? El cliente podrá vincular un nuevo teléfono.`)) {
+                                  resetClientHwid(client.id);
+                                }
+                              }}
+                              className="p-1.5 rounded-lg text-cyan-400 hover:bg-cyan-500/20 transition-colors"
+                              title="Restablecer Dispositivo HWID (Desvincular Teléfono)"
+                            >
+                              <Smartphone size={16} />
+                            </button>
+                          )}
                           {/* Edit Client */}
                           <button
                             onClick={() => {

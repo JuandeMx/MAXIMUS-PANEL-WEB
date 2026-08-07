@@ -210,6 +210,97 @@ app.post('/api/upload', (req, res) => {
   }
 });
 
+// Endpoint de Validación y Vinculación HWID para la App Móvil (Handshake)
+app.post('/api/auth/connect', (req, res) => {
+  try {
+    const { username, password, hwid } = req.body;
+
+    if (!username || !hwid) {
+      return res.status(400).json({
+        status: 'ERROR',
+        message: 'Faltan parámetros requeridos (username y hwid).'
+      });
+    }
+
+    const db = getDb();
+    const clients = db.clients || [];
+
+    // Buscar al cliente por usuario
+    const clientIndex = clients.findIndex((c) => c.username.toLowerCase() === username.toLowerCase());
+    
+    if (clientIndex === -1) {
+      return res.status(401).json({
+        status: 'UNAUTHORIZED',
+        message: '⚠️ Usuario no encontrado o credenciales inválidas.'
+      });
+    }
+
+    const client = clients[clientIndex];
+
+    // Verificar contraseña si se envió
+    if (password && client.uuidOrPassword && client.uuidOrPassword !== password) {
+      return res.status(401).json({
+        status: 'UNAUTHORIZED',
+        message: '⚠️ Contraseña incorrecta.'
+      });
+    }
+
+    // Verificar expiración del usuario
+    if (client.expirationDate) {
+      const exp = new Date(client.expirationDate);
+      const now = new Date();
+      if (exp < now) {
+        return res.status(403).json({
+          status: 'EXPIRED',
+          message: '⚠️ Tu cuenta ha expirado. Por favor renueva tu suscripción.'
+        });
+      }
+    }
+
+    // LÓGICA HWID: Vinculación o Validación de Dispositivo Único
+    if (!client.hwid) {
+      // Primer uso: Vincular HWID del teléfono al cliente
+      client.hwid = hwid;
+      client.hwidLocked = true;
+      client.lastConnectedHwid = hwid;
+      db.clients[clientIndex] = client;
+      saveDb(db);
+
+      console.log(`[HWID-LINK] Usuario "${username}" vinculado exitosamente al dispositivo HWID: ${hwid}`);
+      return res.status(200).json({
+        status: 'SUCCESS',
+        message: 'Dispositivo vinculado exitosamente.',
+        username: client.username,
+        hwid: client.hwid
+      });
+    }
+
+    // Si ya tiene HWID vinculado, verificar que sea exactamente el mismo dispositivo
+    if (client.hwid === hwid) {
+      client.lastConnectedHwid = hwid;
+      db.clients[clientIndex] = client;
+      saveDb(db);
+
+      return res.status(200).json({
+        status: 'SUCCESS',
+        message: 'Acceso autorizado.',
+        username: client.username,
+        hwid: client.hwid
+      });
+    } else {
+      // El HWID no coincide (intento de compartir cuenta)
+      console.warn(`[HWID-DENIED] Intento de acceso no autorizado para "${username}". HWID registrado: ${client.hwid}, HWID entrante: ${hwid}`);
+      return res.status(403).json({
+        status: 'FORBIDDEN',
+        message: '⚠️ Error de Autenticación: Dispositivo no autorizado. Este usuario ya está vinculado a otro teléfono.'
+      });
+    }
+  } catch (e) {
+    console.error('Error en /api/auth/connect:', e);
+    res.status(500).json({ status: 'ERROR', message: 'Error interno del servidor.' });
+  }
+});
+
 // Endpoint Público para la App Móvil: Sincronización de Servidores VPS (IP, CF, CFT) y Categorías/Métodos
 app.get('/api/app/config', (req, res) => {
   const db = getDb();

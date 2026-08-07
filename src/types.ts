@@ -21,6 +21,9 @@ export interface VpnClient {
   resellerId?: string;
   createdAt: string;
   nodeList?: Array<{ serverId: string; serverName: string; ip: string }>;
+  hwid?: string;
+  hwidLocked?: boolean;
+  lastConnectedHwid?: string;
 }
 
 export interface VpsServer {

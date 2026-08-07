@@ -67,6 +67,7 @@ interface AppContextType {
   deleteVpnClient: (id: string) => void;
   toggleClientStatus: (id: string) => void;
   extendClientExpiration: (id: string, days: number) => void;
+  resetClientHwid: (id: string) => void;
 
   addVpsServer: (server: Omit<VpsServer, 'id' | 'status' | 'cpuUsage' | 'ramUsage' | 'diskUsage' | 'bandwidthUsedGb' | 'activeTunnels' | 'uptime'>) => void;
   updateVpsServer: (id: string, serverData: Partial<VpsServer>) => void;
@@ -600,6 +601,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const resetClientHwid = (id: string) => {
+    setClients((prev) =>
+      prev.map((c) => {
+        if (c.id === id) {
+          return {
+            ...c,
+            hwid: undefined,
+            hwidLocked: false,
+            lastConnectedHwid: undefined,
+          };
+        }
+        return c;
+      })
+    );
+    const target = clients.find((c) => c.id === id);
+    addAuditLog(`Restablecido HWID (Dispositivo) del cliente "${target?.username || id}"`, 'Client');
+  };
+
   const syncAllUsersToNewVps = async (targetServer: VpsServer) => {
     if (!clients || clients.length === 0) return;
 
@@ -934,6 +953,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteVpnClient,
         toggleClientStatus,
         extendClientExpiration,
+        resetClientHwid,
 
         addVpsServer,
         updateVpsServer,
