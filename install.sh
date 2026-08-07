@@ -64,6 +64,11 @@ Environment=PORT=84
 WantedBy=multi-user.target
 EOF
 
+# Apertura de puerto 84 en Firewall (UFW / iptables)
+echo -e "\e[1;36m[+] Abriendo puerto 84 en Firewall del sistema...\e[0m"
+ufw allow 84/tcp >/dev/null 2>&1
+iptables -A INPUT -p tcp --dport 84 -j ACCEPT >/dev/null 2>&1
+
 systemctl daemon-reload
 systemctl enable maximus-webpanel >/dev/null 2>&1
 systemctl restart maximus-webpanel >/dev/null 2>&1
