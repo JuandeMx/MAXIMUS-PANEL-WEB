@@ -11,7 +11,8 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Servir la interfaz gráfica compilada de React (dist / public)
 const DIST_DIR = path.join(process.cwd(), 'dist');
@@ -34,8 +35,6 @@ if (!fs.existsSync(UPLOADS_DIR)) {
 
 // Servir la carpeta de uploads públicamente
 app.use('/uploads', express.static(UPLOADS_DIR));
-app.use(express.json({ limit: '20mb' }));
-app.use(express.urlencoded({ limit: '20mb', extended: true }));
 
 // Initial DB Structure
 const initialDb = {
