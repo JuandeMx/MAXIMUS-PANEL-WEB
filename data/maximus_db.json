@@ -40,14 +40,14 @@
       ],
       "id": "srv-01",
       "status": "online",
-      "cpuUsage": 4.8,
-      "ramUsage": 34.7,
+      "cpuUsage": 12,
+      "ramUsage": 34.6,
       "diskUsage": 13.3,
       "bandwidthUsedGb": 3.25,
       "activeTunnels": 0,
-      "uptime": "1d 14h 44m",
-      "bytesSent": 1016215045,
-      "bytesRecv": 2471316759,
+      "uptime": "1d 14h 56m",
+      "bytesSent": 1016488365,
+      "bytesRecv": 2471518565,
       "activeServices": {
         "BADVPN": {
           "status": "ONLINE",
@@ -181,7 +181,27 @@
       "sni": "",
       "payload": "GET / HTTP/1.1[crlf]Host: emailmarketing.personal.com.ar[crlf][crlf][split][crlf][crlf]GET- / HTTP/1.1[crlf]Host: www.personal.com.ar[lf][lf]GET / HTTP/1.1[crlf]Host: [rotate=[CFT]][lf]Connection: Upgrade[lf]Upgrade: websocket[lf]User-Agent: Googlebot/2.1 (+http://www.google.com/bot.html)[lf][lf][split]",
       "createdAt": "2026-08-01"
+    },
+    {
+      "categoryId": "cat-1786131322358",
+      "name": "OXXOCEL",
+      "description": "sin saldo",
+      "sshHost": "[IP]",
+      "sshPort": 443,
+      "protocol": "SSL DIRECT",
+      "sni": "www.fahorro.com",
+      "payload": "",
+      "id": "method-1786131378630",
+      "createdAt": "2026-08-07"
     }
   ],
-  "categories": []
+  "categories": [
+    {
+      "name": "mexico",
+      "iconUrl": "http://localhost:3001/uploads/cat_1786131310172_tox1p.gif",
+      "description": "",
+      "id": "cat-1786131322358",
+      "createdAt": "2026-08-07"
+    }
+  ]
 }
