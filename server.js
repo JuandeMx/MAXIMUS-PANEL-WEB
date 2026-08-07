@@ -161,15 +161,29 @@ app.post('/api/db/update', (req, res) => {
   res.json({ status: 'SUCCESS', message: 'Datos guardados correctamente' });
 });
 
-// Endpoint Público para la App Móvil: Devuelve Categorías, Métodos y Servidores procesados
+// Endpoint Público para la App Móvil: Sincronización de Servidores VPS (IP, CF, CFT) y Categorías/Métodos
 app.get('/api/app/config', (req, res) => {
   const db = getDb();
   const categories = db.categories || [];
   const methods = db.methods || [];
   const servers = db.servers || [];
 
-  // Formatear payload y servidores con dominios Cloudflare [CF] / [CFT] e IP
-  const payloadData = categories.map((cat) => {
+  // 1. Mapear Servidores (Máquinas VPS) con IP real, CF y CFT
+  const activeServers = servers.map((s) => ({
+    id: s.id,
+    name: s.name,
+    flag: s.flag || '🌐',
+    ip: s.ip,
+    cf: s.domainCf || s.ip,
+    cft: s.domainCft || s.ip,
+    sslPort: s.sslPort || 443,
+    openSshPort: s.openSshPort || 22,
+    dropbearPort: s.dropbearPort || 109,
+    status: s.status || 'online',
+  }));
+
+  // 2. Mapear Categorías y sus Métodos de Conexión
+  const categoryList = categories.map((cat) => {
     const catMethods = methods
       .filter((m) => m.categoryId === cat.id)
       .map((m) => ({
@@ -188,27 +202,17 @@ app.get('/api/app/config', (req, res) => {
       name: cat.name,
       iconUrl: cat.iconUrl || '',
       description: cat.description || '',
+      configurationsCount: catMethods.length,
       methods: catMethods,
     };
   });
 
-  const activeServers = servers.map((s) => ({
-    id: s.id,
-    name: s.name,
-    flag: s.flag || '🌐',
-    ip: s.ip,
-    domainCf: s.domainCf || '',
-    domainCft: s.domainCft || '',
-    sslPort: s.sslPort || 443,
-    openSshPort: s.openSshPort || 22,
-    dropbearPort: s.dropbearPort || 109,
-  }));
-
   res.json({
     status: 'ONLINE',
     version: '1.0.0',
+    appTitle: 'MAXIMUS PANEL',
     servers: activeServers,
-    categories: payloadData,
+    categories: categoryList,
   });
 });
 
