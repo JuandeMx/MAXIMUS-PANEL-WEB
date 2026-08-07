@@ -35,7 +35,24 @@ echo -e "\e[1;32m[+] Descargando MAXIMUS PANEL WEB desde GitHub...\e[0m"
 rm -rf /tmp/Maximus-WebPanel 2>/dev/null
 git clone --depth 1 https://github.com/JuandeMx/MAXIMUS-PANEL-WEB.git /tmp/Maximus-WebPanel
 
+# Preservar la base de datos existente si existe en el VPS
+if [ -f "$INSTALL_DIR/data/maximus_db.json" ]; then
+    mkdir -p /tmp/maximus_backup 2>/dev/null
+    cp -r "$INSTALL_DIR/data" /tmp/maximus_backup/ 2>/dev/null
+    cp -r "$INSTALL_DIR/uploads" /tmp/maximus_backup/ 2>/dev/null
+fi
+
 cp -r /tmp/Maximus-WebPanel/* "$INSTALL_DIR/" 2>/dev/null
+
+# Restaurar base de datos e imágenes del usuario tras actualizar código
+if [ -d "/tmp/maximus_backup/data" ]; then
+    mkdir -p "$INSTALL_DIR/data" 2>/dev/null
+    cp -r /tmp/maximus_backup/data/* "$INSTALL_DIR/data/" 2>/dev/null
+    mkdir -p "$INSTALL_DIR/uploads" 2>/dev/null
+    cp -r /tmp/maximus_backup/uploads/* "$INSTALL_DIR/uploads/" 2>/dev/null
+    rm -rf /tmp/maximus_backup 2>/dev/null
+fi
+
 cd "$INSTALL_DIR" || exit
 
 echo -e "\e[1;36m[+] Instalando servidor y preparando archivos estáticos...\e[0m"

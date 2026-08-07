@@ -41,13 +41,13 @@
       "id": "srv-01",
       "status": "online",
       "cpuUsage": 12,
-      "ramUsage": 35,
+      "ramUsage": 35.2,
       "diskUsage": 13.3,
-      "bandwidthUsedGb": 3.4,
+      "bandwidthUsedGb": 3.41,
       "activeTunnels": 0,
-      "uptime": "1d 15h 53m",
-      "bytesSent": 1098723812,
-      "bytesRecv": 2556188198,
+      "uptime": "1d 16h 11m",
+      "bytesSent": 1099429655,
+      "bytesRecv": 2557611429,
       "activeServices": {
         "BADVPN": {
           "status": "ONLINE",
