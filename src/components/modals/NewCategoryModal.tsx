@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, FolderPlus, Image as ImageIcon, FileText, AlertTriangle } from 'lucide-react';
+import { X, FolderPlus, Image as ImageIcon, FileText, AlertTriangle, Upload, Loader2, Check } from 'lucide-react';
 
 export const NewCategoryModal: React.FC = () => {
   const {
@@ -18,9 +18,15 @@ export const NewCategoryModal: React.FC = () => {
   const [iconUrl, setIconUrl] = useState('');
   const [description, setDescription] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setErrorMsg('');
+    setUploading(false);
+    setUploadSuccess(false);
     if (isEditing && selectedCategory) {
       setName(selectedCategory.name || '');
       setIconUrl(selectedCategory.iconUrl || '');
@@ -35,6 +41,55 @@ export const NewCategoryModal: React.FC = () => {
   const handleClose = () => {
     setActiveModal(null);
     setSelectedCategory(null);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setErrorMsg('Por favor selecciona un archivo de imagen válido (PNG, JPG, WEBP).');
+      return;
+    }
+
+    setUploading(true);
+    setErrorMsg('');
+    setUploadSuccess(false);
+
+    try {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const base64 = event.target?.result as string;
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: base64, fileName: file.name }),
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            if (data.url) {
+              setIconUrl(data.url);
+              setUploadSuccess(true);
+              setTimeout(() => setUploadSuccess(false), 2500);
+            } else {
+              setErrorMsg('No se recibió la URL de la imagen cargada.');
+            }
+          } else {
+            setErrorMsg('Error al subir la imagen al servidor VPS.');
+          }
+        } catch (err) {
+          setErrorMsg('Error de red al subir la imagen.');
+        } finally {
+          setUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setErrorMsg('Fallo al procesar el archivo seleccionado.');
+      setUploading(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -102,21 +157,74 @@ export const NewCategoryModal: React.FC = () => {
             />
           </div>
 
-          {/* URL de Imagen / Icono */}
+          {/* Subir Imagen desde la PC o Teléfono */}
           <div className="space-y-1.5">
             <label className="block text-slate-400 font-semibold text-[11px]">
-              URL de Imagen / Logotipo (Opcional)
+              Logotipo / Imagen de Categoría (Subir desde PC/Móvil o URL)
             </label>
-            <div className="relative">
-              <ImageIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                value={iconUrl}
-                onChange={(e) => setIconUrl(e.target.value)}
-                placeholder="https://ejemplo.com/logo.png"
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-[#090f1e] border border-slate-700/60 text-white text-xs placeholder:text-slate-500 focus:border-[#06b6d4] focus:outline-none transition-colors"
-              />
+
+            {/* Hidden Input File */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <ImageIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={iconUrl}
+                  onChange={(e) => setIconUrl(e.target.value)}
+                  placeholder="https://ejemplo.com/logo.png o sube una imagen"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-[#090f1e] border border-slate-700/60 text-white text-xs placeholder:text-slate-500 focus:border-[#06b6d4] focus:outline-none transition-colors"
+                />
+              </div>
+
+              <button
+                type="button"
+                disabled={uploading}
+                onClick={() => fileInputRef.current?.click()}
+                className="px-3.5 py-2.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 font-bold text-xs flex items-center gap-1.5 transition-colors shrink-0 disabled:opacity-50"
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin text-cyan-300" />
+                    <span>Subiendo...</span>
+                  </>
+                ) : uploadSuccess ? (
+                  <>
+                    <Check size={16} className="text-emerald-400" />
+                    <span className="text-emerald-400">¡Subido!</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload size={16} />
+                    <span>Subir Imagen</span>
+                  </>
+                )}
+              </button>
             </div>
+
+            {/* Vista previa de imagen si existe */}
+            {iconUrl && (
+              <div className="flex items-center gap-3 p-2 rounded-xl bg-black/40 border border-white/10 mt-1">
+                <img
+                  src={iconUrl}
+                  alt="Vista Previa"
+                  className="w-8 h-8 rounded-lg object-cover bg-slate-900 border border-white/10"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
+                <span className="text-[10px] text-cyan-300 font-mono truncate max-w-xs">
+                  {iconUrl}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Descripción Corta */}
