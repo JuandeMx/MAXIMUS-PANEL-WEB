@@ -8,10 +8,17 @@ import path from 'path';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 84;
 
 app.use(cors());
 app.use(express.json());
+
+// Servir la interfaz gráfica compilada de React (dist / public)
+const DIST_DIR = path.join(process.cwd(), 'dist');
+if (fs.existsSync(DIST_DIR)) {
+  app.use(express.static(DIST_DIR));
+}
+app.use(express.static(process.cwd()));
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'maximus_db.json');
@@ -362,6 +369,19 @@ app.post('/api/vps/exec', (req, res) => {
   });
 });
 
+// Captura de rutas frontend SPA de React (Login, Dashboard, etc)
+app.get('*', (req, res) => {
+  const distIndexPath = path.join(process.cwd(), 'dist', 'index.html');
+  if (fs.existsSync(distIndexPath)) {
+    return res.sendFile(distIndexPath);
+  }
+  const rootIndexPath = path.join(process.cwd(), 'index.html');
+  if (fs.existsSync(rootIndexPath)) {
+    return res.sendFile(rootIndexPath);
+  }
+  res.send('MAXIMUS PANEL Backend Running');
+});
+
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor Backend Master Maximus escuchando en http://localhost:${PORT}`);
+  console.log(`🚀 MAXIMUS PANEL escuchando en el puerto ${PORT} (http://localhost:${PORT})`);
 });
