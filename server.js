@@ -168,7 +168,7 @@ app.get('/api/app/config', (req, res) => {
   const methods = db.methods || [];
   const servers = db.servers || [];
 
-  // 1. Mapear Servidores (Máquinas VPS) con IP real, CF y CFT
+  // 1. Mapear Servidores (Máquinas VPS) con campos limpios (id, name, flag, ip, cf, cft)
   const activeServers = servers.map((s) => ({
     id: s.id,
     name: s.name,
@@ -176,10 +176,6 @@ app.get('/api/app/config', (req, res) => {
     ip: s.ip,
     cf: s.domainCf || s.ip,
     cft: s.domainCft || s.ip,
-    sslPort: s.sslPort || 443,
-    openSshPort: s.openSshPort || 22,
-    dropbearPort: s.dropbearPort || 109,
-    status: s.status || 'online',
   }));
 
   // 2. Mapear Categorías y sus Métodos de Conexión
@@ -208,9 +204,6 @@ app.get('/api/app/config', (req, res) => {
   });
 
   res.json({
-    status: 'ONLINE',
-    version: '1.0.0',
-    appTitle: 'MAXIMUS PANEL',
     servers: activeServers,
     categories: categoryList,
   });
