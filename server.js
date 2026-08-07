@@ -144,6 +144,8 @@ app.post('/api/db/update', (req, res) => {
   if (servers !== undefined) db.servers = servers;
   if (clients !== undefined) db.clients = clients;
   if (resellers !== undefined) db.resellers = resellers;
+  if (req.body.methods !== undefined) db.methods = req.body.methods;
+  if (req.body.categories !== undefined) db.categories = req.body.categories;
   if (users !== undefined) {
     // Preservar contraseñas existentes si se envían usuarios sin contraseña
     db.users = users.map((u) => {
@@ -157,6 +159,57 @@ app.post('/api/db/update', (req, res) => {
 
   saveDb(db);
   res.json({ status: 'SUCCESS', message: 'Datos guardados correctamente' });
+});
+
+// Endpoint Público para la App Móvil: Devuelve Categorías, Métodos y Servidores procesados
+app.get('/api/app/config', (req, res) => {
+  const db = getDb();
+  const categories = db.categories || [];
+  const methods = db.methods || [];
+  const servers = db.servers || [];
+
+  // Formatear payload y servidores con dominios Cloudflare [CF] / [CFT] e IP
+  const payloadData = categories.map((cat) => {
+    const catMethods = methods
+      .filter((m) => m.categoryId === cat.id)
+      .map((m) => ({
+        id: m.id,
+        name: m.name,
+        description: m.description || '',
+        sshHost: m.sshHost || '[IP]',
+        sshPort: m.sshPort || 80,
+        protocol: m.protocol || 'HTTP DIRECT / PAYLOAD',
+        sni: m.sni || '',
+        payload: m.payload || '',
+      }));
+
+    return {
+      id: cat.id,
+      name: cat.name,
+      iconUrl: cat.iconUrl || '',
+      description: cat.description || '',
+      methods: catMethods,
+    };
+  });
+
+  const activeServers = servers.map((s) => ({
+    id: s.id,
+    name: s.name,
+    flag: s.flag || '🌐',
+    ip: s.ip,
+    domainCf: s.domainCf || '',
+    domainCft: s.domainCft || '',
+    sslPort: s.sslPort || 443,
+    openSshPort: s.openSshPort || 22,
+    dropbearPort: s.dropbearPort || 109,
+  }));
+
+  res.json({
+    status: 'ONLINE',
+    version: '1.0.0',
+    servers: activeServers,
+    categories: payloadData,
+  });
 });
 
 // Ruta raíz: Estado del servidor backend

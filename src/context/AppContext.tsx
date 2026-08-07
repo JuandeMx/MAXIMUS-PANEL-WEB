@@ -277,6 +277,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             setResellers(data.resellers);
             localStorage.setItem('maximus_resellers', JSON.stringify(data.resellers));
           }
+          if (Array.isArray(data.methods)) {
+            setMethods(data.methods);
+            localStorage.setItem('maximus_methods', JSON.stringify(data.methods));
+          }
+          if (Array.isArray(data.categories)) {
+            setCategories(data.categories);
+            localStorage.setItem('maximus_categories', JSON.stringify(data.categories));
+          }
           if (Array.isArray(data.users) && data.users.length > 0) {
             setUsersList(data.users);
           } else {
@@ -468,7 +476,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         await fetch('/api/db/update', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ servers, clients, resellers }),
+          body: JSON.stringify({ servers, clients, resellers, methods, categories }),
         }).catch(() => {});
       } catch (e) {}
     };
@@ -476,8 +484,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('maximus_servers', JSON.stringify(servers));
     localStorage.setItem('maximus_clients', JSON.stringify(clients));
     localStorage.setItem('maximus_resellers', JSON.stringify(resellers));
+    localStorage.setItem('maximus_methods', JSON.stringify(methods));
+    localStorage.setItem('maximus_categories', JSON.stringify(categories));
     syncToBackend();
-  }, [servers, clients, resellers]);
+  }, [servers, clients, resellers, methods, categories]);
 
   useEffect(() => {
     try {

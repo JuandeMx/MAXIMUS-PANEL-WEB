@@ -106,15 +106,42 @@ export const SettingsView: React.FC = () => {
           </div>
         </div>
 
-        {/* 2. API Keys */}
+        {/* 2. API Keys & App Integration Endpoint */}
         <div className="p-6 rounded-2xl glass-panel space-y-4">
           <h3 className="text-sm font-bold text-[var(--text)] flex items-center gap-2">
             <Key size={18} className="text-amber-400" />
-            <span>Clave de API REST (Para Bots de Telegram / Integración)</span>
+            <span>Integración API para la App Móvil</span>
           </h3>
 
+          <div className="p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-xs text-slate-200 space-y-2">
+            <p className="font-bold text-cyan-300 flex items-center gap-2">
+              <span>📱 URL de Sincronización para la App Móvil:</span>
+            </p>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                readOnly
+                value={`${window.location.origin}/api/app/config`}
+                className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-cyan-300 font-mono text-xs font-bold"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/api/app/config`);
+                  alert('¡URL de la API para la App copiada al portapapeles!');
+                }}
+                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shrink-0 transition-colors shadow-lg"
+              >
+                Copiar URL API
+              </button>
+            </div>
+            <p className="text-[11px] text-slate-400">
+              Ingresa esta URL en la configuración de actualización remota de tu App Android/iOS para sincronizar Categorías, Métodos y Servidores en tiempo real.
+            </p>
+          </div>
+
           <div>
-            <label className="block text-xs text-[var(--text-muted)] font-bold mb-1">API Token Secreta</label>
+            <label className="block text-xs text-[var(--text-muted)] font-bold mb-1">API Token Secreta (Para Bots)</label>
             <div className="flex gap-2">
               <input
                 type="text"
