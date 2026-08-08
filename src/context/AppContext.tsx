@@ -267,11 +267,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedCategory, setSelectedCategory] = useState<MethodCategory | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const isDbLoadedRef = React.useRef(false);
+  const activeModalRef = React.useRef(activeModal);
+  useEffect(() => {
+    activeModalRef.current = activeModal;
+  }, [activeModal]);
 
   // Sincronizar datos globales desde el backend (/api/db/sync)
   useEffect(() => {
     const fetchBackendDb = async () => {
+      // Si hay una ventana modal abierta (editando categoría, método, cliente, etc.), NO hacer fetch ni sobrescribir
+      if (activeModalRef.current) return;
+
       try {
         const res = await fetch('/api/db/sync');
         if (res.ok) {
@@ -288,16 +294,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             setResellers(data.resellers);
             localStorage.setItem('maximus_resellers', JSON.stringify(data.resellers));
           }
-          // Si hay una ventana modal abierta (editando categoría, método, cliente, etc.), NO sobrescribir para evitar perder lo que escribe el usuario
-          if (!activeModal) {
-            if (Array.isArray(data.methods)) {
-              setMethods(data.methods);
-              localStorage.setItem('maximus_methods', JSON.stringify(data.methods));
-            }
-            if (Array.isArray(data.categories)) {
-              setCategories(data.categories);
-              localStorage.setItem('maximus_categories', JSON.stringify(data.categories));
-            }
+          if (Array.isArray(data.methods)) {
+            setMethods(data.methods);
+            localStorage.setItem('maximus_methods', JSON.stringify(data.methods));
+          }
+          if (Array.isArray(data.categories)) {
+            setCategories(data.categories);
+            localStorage.setItem('maximus_categories', JSON.stringify(data.categories));
           }
           if (Array.isArray(data.users) && data.users.length > 0) {
             setUsersList(data.users);
