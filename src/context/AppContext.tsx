@@ -241,11 +241,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const roundToTwoDecimals = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
 
     fetchVpsMetrics();
-    const interval = setInterval(fetchVpsMetrics, 8000);
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
   }, [servers.length]);
 
   // Auth State
@@ -328,8 +323,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     };
     fetchBackendDb();
-    const interval = setInterval(fetchBackendDb, 5000);
-    return () => clearInterval(interval);
   }, []);
 
   // Función de Autenticación
