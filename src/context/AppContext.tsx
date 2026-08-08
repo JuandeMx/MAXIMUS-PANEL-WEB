@@ -211,6 +211,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
                   return {
                     ...srv,
+                    domainCf: srv.domainCf,
+                    domainCft: srv.domainCft,
                     status: 'online' as const,
                     cpuUsage: data.cpuUsage ?? srv.cpuUsage,
                     ramUsage: data.ramUsage ?? srv.ramUsage,
