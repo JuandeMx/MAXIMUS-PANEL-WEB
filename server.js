@@ -337,7 +337,7 @@ app.get('/api/app/config', (req, res) => {
   const methods = db.methods || [];
   const servers = db.servers || [];
 
-  // 1. Mapear Servidores (Máquinas VPS) con campos limpios (id, name, flag, ip, cf, cft)
+  // 1. Mapear Servidores (Máquinas VPS) con campos completos (id, name, flag, ip, cf, cft, domainCf, domainCft)
   const activeServers = servers.map((s) => ({
     id: s.id,
     name: s.name,
@@ -345,6 +345,8 @@ app.get('/api/app/config', (req, res) => {
     ip: s.ip,
     cf: s.domainCf || s.ip,
     cft: s.domainCft || s.ip,
+    domainCf: s.domainCf || s.ip,
+    domainCft: s.domainCft || s.ip,
   }));
 
   // 2. Mapear Categorías y sus Métodos de Conexión
