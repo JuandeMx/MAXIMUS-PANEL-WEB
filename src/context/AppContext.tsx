@@ -271,23 +271,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             localStorage.setItem('maximus_servers', JSON.stringify(data.servers));
           }
           if (Array.isArray(data.clients) && data.clients.length > 0) {
-            setClients((prevClients) => {
-              // Si el estado local aun no cargo o cambio, actualizar preservando datos sincronizados
-              return data.clients;
-            });
+            setClients(data.clients);
             localStorage.setItem('maximus_clients', JSON.stringify(data.clients));
           }
           if (Array.isArray(data.resellers) && data.resellers.length > 0) {
             setResellers(data.resellers);
             localStorage.setItem('maximus_resellers', JSON.stringify(data.resellers));
           }
-          if (Array.isArray(data.methods)) {
-            setMethods(data.methods);
-            localStorage.setItem('maximus_methods', JSON.stringify(data.methods));
-          }
-          if (Array.isArray(data.categories)) {
-            setCategories(data.categories);
-            localStorage.setItem('maximus_categories', JSON.stringify(data.categories));
+          // Si hay una ventana modal abierta (editando categoría, método, cliente, etc.), NO sobrescribir para evitar perder lo que escribe el usuario
+          if (!activeModal) {
+            if (Array.isArray(data.methods)) {
+              setMethods(data.methods);
+              localStorage.setItem('maximus_methods', JSON.stringify(data.methods));
+            }
+            if (Array.isArray(data.categories)) {
+              setCategories(data.categories);
+              localStorage.setItem('maximus_categories', JSON.stringify(data.categories));
+            }
           }
           if (Array.isArray(data.users) && data.users.length > 0) {
             setUsersList(data.users);
