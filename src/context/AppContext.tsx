@@ -257,6 +257,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [usersList, setUsersList] = useState<SystemUser[]>([]);
 
+  // Modal & Selection
+  const [activeModal, setActiveModal] = useState<AppContextType['activeModal']>(null);
+  const [selectedClient, setSelectedClient] = useState<VpnClient | null>(null);
+  const [selectedServer, setSelectedServer] = useState<VpsServer | null>(null);
+  const [selectedAdmin, setSelectedAdmin] = useState<SystemUser | null>(null);
+  const [selectedReseller, setSelectedReseller] = useState<Reseller | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<ConnectionMethod | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<MethodCategory | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
   const isDbLoadedRef = React.useRef(false);
 
   // Sincronizar datos globales desde el backend (/api/db/sync)
@@ -503,16 +513,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error(e);
     }
   }, [methods, categories]);
-
-  // Modal & Selection
-  const [activeModal, setActiveModal] = useState<AppContextType['activeModal']>(null);
-  const [selectedClient, setSelectedClient] = useState<VpnClient | null>(null);
-  const [selectedServer, setSelectedServer] = useState<VpsServer | null>(null);
-  const [selectedAdmin, setSelectedAdmin] = useState<SystemUser | null>(null);
-  const [selectedReseller, setSelectedReseller] = useState<Reseller | null>(null);
-  const [selectedMethod, setSelectedMethod] = useState<ConnectionMethod | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<MethodCategory | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Apply theme class to <html>
   useEffect(() => {
