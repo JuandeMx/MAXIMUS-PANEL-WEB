@@ -162,12 +162,18 @@ export const ServersView: React.FC = () => {
                       <input
                         type="text"
                         placeholder="cf.midominio.com"
-                        value={server.domainCf || ''}
-                        onChange={(e) => {
-                          const val = e.target.value;
+                        defaultValue={server.domainCf || ''}
+                        key={`cf-${server.id}-${server.domainCf}`}
+                        onBlur={(e) => {
+                          const val = e.target.value.trim();
                           updateVpsServer(server.id, { domainCf: val });
                           setEditingDomainServerId(server.id);
                           setTimeout(() => setEditingDomainServerId(null), 1500);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            (e.target as HTMLInputElement).blur();
+                          }
                         }}
                         className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700/60 text-cyan-300 font-mono text-[11px] focus:border-cyan-400 focus:outline-none"
                       />
@@ -178,12 +184,18 @@ export const ServersView: React.FC = () => {
                       <input
                         type="text"
                         placeholder="cft.midominio.com"
-                        value={server.domainCft || ''}
-                        onChange={(e) => {
-                          const val = e.target.value;
+                        defaultValue={server.domainCft || ''}
+                        key={`cft-${server.id}-${server.domainCft}`}
+                        onBlur={(e) => {
+                          const val = e.target.value.trim();
                           updateVpsServer(server.id, { domainCft: val });
                           setEditingDomainServerId(server.id);
                           setTimeout(() => setEditingDomainServerId(null), 1500);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            (e.target as HTMLInputElement).blur();
+                          }
                         }}
                         className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700/60 text-purple-300 font-mono text-[11px] focus:border-purple-400 focus:outline-none"
                       />
