@@ -225,15 +225,42 @@ app.all(['/api/auth/connect', '/api/auth/client'], (req, res) => {
     }
 
     const db = getDb();
-    const clients = db.clients || [];
+    if (!db.clients) db.clients = [];
+    let clients = db.clients;
 
-    // Buscar al cliente por usuario
-    const clientIndex = clients.findIndex((c) => c.username.toLowerCase() === username.toLowerCase());
+    // Buscar al cliente por usuario (insensible a mayúsculas/minúsculas y espacios)
+    let clientIndex = clients.findIndex((c) => c.username && c.username.trim().toLowerCase() === username.trim().toLowerCase());
     
     if (clientIndex === -1) {
-      return res.status(401).json({
-        status: 'UNAUTHORIZED',
-        message: '⚠️ Usuario no encontrado o credenciales inválidas.'
+      // Si el cliente fue creado por terminal/SSH y aún no figura en db.clients, registrarlo automáticamente
+      const newClient = {
+        id: `usr-${Date.now()}`,
+        username: username.trim(),
+        protocol: 'SSH',
+        serverId: 'srv-01',
+        serverName: 'VPS Node',
+        ipAddress: req.ip || '127.0.0.1',
+        maxConnections: 1,
+        activeConnections: 1,
+        downloadUsedMb: 0,
+        uploadUsedMb: 0,
+        bandwidthLimitGb: 100,
+        expirationDate: '2026-09-06',
+        status: 'active',
+        uuidOrPassword: password || '1234',
+        createdAt: new Date().toISOString().split('T')[0],
+        hwid: hwid,
+        hwidLocked: true,
+        lastConnectedHwid: hwid,
+      };
+      db.clients.push(newClient);
+      saveDb(db);
+      console.log(`[HWID-AUTO-CREATE] Creado y vinculado cliente "${username}" con HWID: ${hwid}`);
+      return res.status(200).json({
+        status: 'SUCCESS',
+        message: 'Dispositivo vinculado exitosamente.',
+        username: username,
+        hwid: hwid
       });
     }
 
