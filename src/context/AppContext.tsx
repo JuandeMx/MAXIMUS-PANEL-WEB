@@ -268,6 +268,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [searchQuery, setSearchQuery] = useState('');
 
   const activeModalRef = React.useRef(activeModal);
+  const isDbLoadedRef = React.useRef(false);
   useEffect(() => {
     activeModalRef.current = activeModal;
   }, [activeModal]);
