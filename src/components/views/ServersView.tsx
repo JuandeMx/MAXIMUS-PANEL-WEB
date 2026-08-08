@@ -19,6 +19,77 @@ import {
   Users,
 } from 'lucide-react';
 
+interface ServerDomainCardProps {
+  server: VpsServer;
+  updateVpsServer: (id: string, data: Partial<VpsServer>) => void;
+}
+
+const ServerDomainCard: React.FC<ServerDomainCardProps> = ({ server, updateVpsServer }) => {
+  const [cf, setCf] = useState(server.domainCf || '');
+  const [cft, setCft] = useState(server.domainCft || '');
+  const [saved, setSaved] = useState(false);
+
+  React.useEffect(() => {
+    setCf(server.domainCf || '');
+    setCft(server.domainCft || '');
+  }, [server.domainCf, server.domainCft]);
+
+  const handleSave = () => {
+    updateVpsServer(server.id, { domainCf: cf.trim(), domainCft: cft.trim() });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  return (
+    <div className="mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2.5">
+      <div className="flex items-center justify-between">
+        <span className="font-bold text-cyan-400 flex items-center gap-1.5 text-[11px]">
+          <Globe size={13} /> Dominios Cloudflare (CF / CFT)
+        </span>
+        {saved && (
+          <span className="text-[10px] text-emerald-400 font-semibold animate-pulse flex items-center gap-1">
+            <Check size={12} /> Guardado
+          </span>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div>
+          <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Dominio CF (SNI):</label>
+          <input
+            type="text"
+            placeholder="cf.midominio.com"
+            value={cf}
+            onChange={(e) => setCf(e.target.value)}
+            className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700/60 text-cyan-300 font-mono text-[11px] focus:border-cyan-400 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Dominio CFT (TLS/WS):</label>
+          <input
+            type="text"
+            placeholder="cft.midominio.com"
+            value={cft}
+            onChange={(e) => setCft(e.target.value)}
+            className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700/60 text-purple-300 font-mono text-[11px] focus:border-purple-400 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end pt-1">
+        <button
+          type="button"
+          onClick={handleSave}
+          className="px-3 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 font-bold text-[10px] transition-colors"
+        >
+          Guardar Dominios
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export const ServersView: React.FC = () => {
   const {
     servers,
@@ -145,47 +216,7 @@ export const ServersView: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Dominios Cloudflare (CF / CFT) */}
-                <div className="mt-3 bg-[#090f1e]/80 border border-slate-700/50 p-3 rounded-xl space-y-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-cyan-400 flex items-center gap-1.5 text-[11px]">
-                      <Globe size={13} /> Dominios Cloudflare (CF / CFT)
-                    </span>
-                    {editingDomainServerId === server.id && (
-                      <span className="text-[10px] text-emerald-400 font-semibold animate-pulse">Guardado</span>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Dominio CF (SNI):</label>
-                      <input
-                        type="text"
-                        placeholder="cf.midominio.com"
-                        value={server.domainCf || ''}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          updateVpsServer(server.id, { domainCf: val });
-                        }}
-                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700/60 text-cyan-300 font-mono text-[11px] focus:border-cyan-400 focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Dominio CFT (TLS/WS):</label>
-                      <input
-                        type="text"
-                        placeholder="cft.midominio.com"
-                        value={server.domainCft || ''}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          updateVpsServer(server.id, { domainCft: val });
-                        }}
-                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700/60 text-purple-300 font-mono text-[11px] focus:border-purple-400 focus:outline-none"
-                      />
-                    </div>
-                  </div>
-                </div>
+                <ServerDomainCard server={server} updateVpsServer={updateVpsServer} />
 
                 {/* Hardware Resource Progress Bars */}
                 <div className="mt-5 space-y-3">
