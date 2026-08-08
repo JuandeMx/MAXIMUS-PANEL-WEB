@@ -271,7 +271,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             localStorage.setItem('maximus_servers', JSON.stringify(data.servers));
           }
           if (Array.isArray(data.clients) && data.clients.length > 0) {
-            setClients(data.clients);
+            setClients((prevClients) => {
+              // Si el estado local aun no cargo o cambio, actualizar preservando datos sincronizados
+              return data.clients;
+            });
             localStorage.setItem('maximus_clients', JSON.stringify(data.clients));
           }
           if (Array.isArray(data.resellers) && data.resellers.length > 0) {
@@ -309,6 +312,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     };
     fetchBackendDb();
+    const interval = setInterval(fetchBackendDb, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // Función de Autenticación
